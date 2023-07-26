@@ -1,0 +1,53 @@
+DETECT SCRIPT 1
+# Function to check if Java is installed and get its version
+function Get-JavaVersion {
+    $javaPath = (Get-Command java -ErrorAction SilentlyContinue).Source
+
+    if ($javaPath) {
+        $javaVersion = (java -version 2>&1) | Select-String 'version "[0-9]+\.[0-9]+\.[0-9]+' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Value }
+        if ($javaVersion) {
+            $javaVersion
+        } else {
+            "Java is installed, but version information couldn't be retrieved."
+        }
+    } else {
+        "Java is not installed."
+    }
+}
+
+# Detect Java version
+$javaVersion = Get-JavaVersion
+
+# Output the result to Microsoft Endpoint Manager (Intune)
+Set-DetectionResult -DetectionName "Java Version Detection" -Result $javaVersion
+
+Remediate SCRIPT that does nothing
+
+# This script does nothing as requested for remediation
+# No actual remediation is needed as the detection script provides information about the Java version
+# However, you can add your desired remediation actions here if needed
+
+DETECT SCRIPT 2
+
+# Get Java version using registry
+function Get-JavaVersion {
+    $javaKey = "HKLM:\SOFTWARE\JavaSoft\Java Runtime Environment"
+    $javaVersion = Get-ItemProperty -Path $javaKey | Select-Object -ExpandProperty CurrentVersion
+    return $javaVersion
+}
+
+# Main script
+$javaVersion = Get-JavaVersion
+if ($javaVersion) {
+    Write-Host "Java version detected: $javaVersion"
+} else {
+    Write-Host "Java is not installed or version information not found."
+}
+
+Remediate SCRIPT that does nothing
+# This script does nothing as requested for remediation
+# No actual remediation is needed as the detection script provides information about the Java version
+# However, you can add your desired remediation actions here if needed
+
+
+
