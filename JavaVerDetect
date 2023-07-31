@@ -1,4 +1,48 @@
 DETECT SCRIPT 1
+# Define the minimum required Java version
+$MinimumJavaVersion = [version]"1.8.0"  # Adjust this as per your requirement
+
+# Function to check if Java is installed and return its version
+function Get-JavaVersion {
+    # Check for Java executable
+    $javaExePath = Get-Command java.exe -ErrorAction SilentlyContinue
+    if ($javaExePath) {
+        # Extract the version information from the file
+        $versionInfo = (Get-Command java.exe).FileVersionInfo
+        $version = $versionInfo.ProductVersion
+
+        # Java version numbers usually start with "1." (e.g., 1.8.0_301)
+        # If it starts with "1.", remove it to get a valid version format
+        if ($version -match "^1\.(\d+)\.(\d+)_.*$") {
+            $version = "{0}.{1}" -f $Matches[1], $Matches[2]
+        }
+
+        return $version
+    } else {
+        return $null
+    }
+}
+
+# Check the installed Java version
+$installedJavaVersion = Get-JavaVersion
+
+# Compare the installed version with the minimum required version
+if ($installedJavaVersion -ge $MinimumJavaVersion) {
+    # Return the version as output
+    Write-Output $installedJavaVersion
+} else {
+    # If Java is not installed or the version is lower, return empty output
+    Write-Output "Java Not installed"
+}
+
+Remediate SCRIPT that does nothing
+
+# This script is intentionally left empty as there is no action required for remediation.
+# Intune will only retrieve the Java version from the detection script, so there's no need to take further action.
+# However, you can include any necessary remediation actions if needed in the future.
+
+
+DETECT SCRIPT 2
 # Function to check if Java is installed and get its version
 function Get-JavaVersion {
     $javaPath = (Get-Command java -ErrorAction SilentlyContinue).Source
@@ -27,7 +71,7 @@ Remediate SCRIPT that does nothing
 # No actual remediation is needed as the detection script provides information about the Java version
 # However, you can add your desired remediation actions here if needed
 
-DETECT SCRIPT 2
+DETECT SCRIPT 3
 
 # Get Java version using registry
 function Get-JavaVersion {
@@ -45,6 +89,7 @@ if ($javaVersion) {
 }
 
 Remediate SCRIPT that does nothing
+
 # This script does nothing as requested for remediation
 # No actual remediation is needed as the detection script provides information about the Java version
 # However, you can add your desired remediation actions here if needed
